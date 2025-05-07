@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import application.model.exeptions.DeomainExeption;
+
 public class Reservation {
 
 	private Integer roomNumber;
@@ -16,13 +18,16 @@ public class Reservation {
 	public Reservation() {
 	}
 	
-	public Reservation(Integer roomNumber, Date checkIn, Date checkOut) {
-		super();
+	public Reservation(Integer roomNumber, Date checkIn, Date checkOut) throws DeomainExeption {
+		if(!checkOut.after(checkIn)) {
+			throw new DeomainExeption("Check-out date must beaftercheck-in date");
+		} 
 		this.roomNumber = roomNumber;
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
 	}
 
+	
 	public Integer getRoomNumber() {
 		return roomNumber;
 	}
@@ -45,22 +50,19 @@ public class Reservation {
 		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 	}
 	
-	public String updateDates(Date Checkin, Date checkout) {
+	public void updateDates(Date checkIn, Date checkOut) throws DeomainExeption {
 		
 		Date now = new Date();
 		if(checkIn.before(now) || checkOut.before(now)) {
-			return "Reservation dates for update must be future dates";
+			throw new IllegalArgumentException("Reservation dates for updatemust be future dates");
 		}
 		
 		if(!checkOut.after(checkIn)) {
-			return "Error in reservation: Check-out date must be after checkIn date";
+			throw new DeomainExeption("Check-out date must beaftercheck-in date");
 		} 
 		
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
-		
-		return null;
-		
 		}
 	
 	
